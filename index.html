@@ -35,9 +35,17 @@
     .status-on { color: #22d3ee; }
     
     .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .btn-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
     .btn-stack { display: flex; flex-direction: column; gap: 8px; }
     
-    .logs-container { flex: 1; min-height: 120px; font-family: monospace; font-size: 11px; color: #67e8f9; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; background-color: #020617; padding: 10px; border-radius: 6px; border: 1px solid #1e293b; }
+    /* ESTILOS DO CRONÔMETRO */
+    .timer-display {
+      font-family: monospace; font-size: 28px; font-weight: bold; text-align: center;
+      color: #38bdf8; background: #020617; padding: 8px; border-radius: 6px;
+      border: 1px solid #334155; margin-bottom: 8px; letter-spacing: 2px;
+    }
+
+    .logs-container { flex: 1; min-height: 100px; font-family: monospace; font-size: 11px; color: #67e8f9; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; background-color: #020617; padding: 10px; border-radius: 6px; border: 1px solid #1e293b; }
 
     /* PREVIEW MOBILE (DIREITA) */
     .preview-area { flex: 1; display: flex; align-items: center; justify-content: center; background-color: #020617; padding: 20px; }
@@ -129,6 +137,17 @@
         <button class="btn-success" id="btnConnect" onclick="toggleConnect()">Conectar</button>
       </div>
       <span id="statusText" class="status-tag status-off">● Status: Desconectado</span>
+    </div>
+
+    <!-- CRONÔMETRO DA DISPUTA (4 MINUTOS) -->
+    <div class="card">
+      <label>⏱️ Cronômetro da Disputa</label>
+      <div class="timer-display" id="timerDisplay">04:00</div>
+      <div class="btn-grid-3">
+        <button class="btn-success" onclick="startTimer()">Iniciar</button>
+        <button class="btn-warning" onclick="pauseTimer()">Pausar</button>
+        <button class="btn-danger" onclick="resetTimer()">Zerar</button>
+      </div>
     </div>
 
     <!-- Pedir Interação Automática -->
@@ -293,11 +312,16 @@
     let mouthInterval = null;
     let currentTab = 'taps';
 
+    // Variáveis do Cronômetro (4 minutos = 240 segundos)
+    let totalSeconds = 240;
+    let timerInterval = null;
+    let timerRunning = false;
+
     // Estruturas de dados para o Top 10
     let rankingTaps = [];
     let rankingCoins = [];
 
-    // Frases prontas no estilo do Greg (falando rápido, meio indignado, focado em regras e preocupado)
+    // Frases prontas no estilo do Greg
     const tapPrompts = [
       "Caramba, pessoal! Se vocês não derem tap tap na tela, o meu alarme vai disparar e eu vou me atrasar!",
       "Minha mãe disse que se a live não bater a meta de curtidas, eu vou ficar de castigo sem ver TV por um mês!",
@@ -311,6 +335,48 @@
       "Mandem moedas por favor! Minha mesada não cobre os custos de manter este robô ligado!",
       "Se alguém mandar moeda, eu juro que finjo que sou popular na escola!"
     ];
+
+    // FUNÇÕES DO CRONÔMETRO
+    function updateTimerDisplay() {
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      const formatted = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+      document.getElementById('timerDisplay').innerText = formatted;
+    }
+
+    function startTimer() {
+      if (timerRunning) return;
+      if (totalSeconds <= 0) totalSeconds = 240; // Reinicia se estiver zerado
+      
+      timerRunning = true;
+      timerInterval = setInterval(() => {
+        if (totalSeconds > 0) {
+          totalSeconds--;
+          updateTimerDisplay();
+        } else {
+          clearInterval(timerInterval);
+          timerRunning = false;
+          addLog("⏰ O tempo da disputa acabou!");
+          speakText("Tempo esgotado! A disputa de tap tap e moedas acabou! Vamos ver quem ganhou no ranking!");
+        }
+      }, 1000);
+      addLog("⏱️ Cronômetro iniciado.");
+    }
+
+    function pauseTimer() {
+      if (!timerRunning) return;
+      clearInterval(timerInterval);
+      timerRunning = false;
+      addLog("⏱️ Cronômetro pausado.");
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      totalSeconds = 240;
+      updateTimerDisplay();
+      addLog("⏱️ Cronômetro reiniciado para 04:00.");
+    }
 
     function addLog(msg) {
       const logsBox = document.getElementById('logsBox');
@@ -371,12 +437,9 @@
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'pt-BR';
-        
-        // Ajustes para a voz do Greg Wuliger (jovem, tom natural/humano sem efeito robótico, ágil e um pouco tenso)
-        utterance.pitch = 1.15; // Tom de adolescente (um pouco mais alto que o Chris, mas natural)
-        utterance.rate = 1.25;  // Ritmo acelerado, característico do Greg falando rápido quando está aflito
+        utterance.pitch = 1.15;
+        utterance.rate = 1.25;
 
-        // Tenta encontrar uma voz padrão do sistema em português que seja natural humana (evitando sintetizadores metálicos/robóticos)
         const voices = window.speechSynthesis.getVoices();
         const ptVoice = voices.find(v => v.lang.includes('pt') && !v.name.toLowerCase().includes('robot') && !v.name.toLowerCase().includes('compact'));
         if (ptVoice) {
@@ -433,7 +496,6 @@
       chatList.prepend(div);
     }
 
-    // LÓGICA DE RANKING (TOP 1 A 10)
     function updateScore(list, username, amount) {
       let item = list.find(entry => entry.name.toLowerCase() === username.toLowerCase());
       if (item) {
@@ -533,6 +595,7 @@
 
     // Inicialização da interface
     renderRanking();
+    updateTimerDisplay();
   </script>
 </body>
 </html>
