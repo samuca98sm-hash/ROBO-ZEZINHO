@@ -3,527 +3,329 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TikTok Live Studio - Robô Zezinho</title>
+  <title>Robô Zezinho - TikTok Live</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { display: flex; height: 100vh; width: 100vw; background-color: #0f172a; color: #fff; font-family: system-ui, -apple-system, sans-serif; overflow: hidden; }
+    body { display: flex; height: 100vh; width: 100vw; background: #0f172a; color: #fff; font-family: sans-serif; overflow: hidden; }
     
     /* PAINEL LATERAL */
-    .sidebar { width: 400px; background-color: #1e293b; padding: 20px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; border-right: 1px solid #334155; }
-    .sidebar h2 { font-size: 20px; font-weight: bold; }
-    .sidebar p { font-size: 13px; color: #94a3b8; }
+    .sidebar { width: 380px; background: #1e293b; padding: 15px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; border-right: 1px solid #334155; }
+    .sidebar h2 { font-size: 18px; }
+    .card { background: #0f172a; padding: 12px; border-radius: 8px; border: 1px solid #334155; }
+    .card label { font-size: 11px; color: #94a3b8; font-weight: bold; display: block; margin-bottom: 5px; text-transform: uppercase; }
     
-    .card { background-color: #0f172a; padding: 14px; border-radius: 8px; border: 1px solid #334155; }
-    .card label { font-size: 11px; color: #cbd5e1; font-weight: bold; display: block; margin-bottom: 6px; text-transform: uppercase; }
+    .input-group { display: flex; gap: 6px; margin-bottom: 6px; }
+    input { flex: 1; padding: 8px; border-radius: 6px; border: 1px solid #334155; background: #1e293b; color: #fff; font-size: 12px; outline: none; }
+    button { padding: 8px 12px; border-radius: 6px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; }
+    .btn-primary { background: #0284c7; color: #fff; }
+    .btn-success { background: #06b6d4; color: #fff; }
+    .btn-warning { background: #f59e0b; color: #000; }
+    .btn-pink { background: #ec4899; color: #fff; }
+    .btn-purple { background: #8b5cf6; color: #fff; }
+    .btn-secondary { background: #475569; color: #fff; width: 100%; margin-top: 5px; }
     
-    .input-group { display: flex; gap: 8px; }
-    input[type="text"], input[type="number"] { flex: 1; padding: 8px 12px; border-radius: 6px; border: 1px solid #334155; background-color: #1e293b; color: #fff; font-size: 13px; outline: none; }
-    input[type="text"]:focus, input[type="number"]:focus { border-color: #06b6d4; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
     
-    button { padding: 8px 14px; border-radius: 6px; border: none; font-weight: bold; font-size: 13px; cursor: pointer; transition: opacity 0.2s; }
-    button:hover { opacity: 0.9; }
-    .btn-primary { background-color: #0284c7; color: #fff; }
-    .btn-success { background-color: #06b6d4; color: #fff; }
-    .btn-warning { background-color: #f59e0b; color: #000; }
-    .btn-danger { background-color: #ef4444; color: #fff; }
-    .btn-purple { background-color: #8b5cf6; color: #fff; }
-    .btn-pink { background-color: #ec4899; color: #fff; }
-    .btn-secondary { background-color: #475569; color: #fff; }
-    
-    .status-tag { font-size: 11px; margin-top: 6px; display: block; font-weight: 600; }
-    .status-off { color: #f87171; }
-    .status-on { color: #22d3ee; }
-    
-    .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .btn-stack { display: flex; flex-direction: column; gap: 8px; }
-    
-    .logs-container { flex: 1; min-height: 120px; font-family: monospace; font-size: 11px; color: #67e8f9; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; background-color: #020617; padding: 10px; border-radius: 6px; border: 1px solid #1e293b; }
+    .logs { flex: 1; min-height: 100px; font-family: monospace; font-size: 10px; color: #67e8f9; background: #020617; padding: 8px; border-radius: 6px; overflow-y: auto; }
 
-    /* PREVIEW MOBILE (DIREITA) */
-    .preview-area { flex: 1; display: flex; align-items: center; justify-content: center; background-color: #020617; padding: 20px; }
-    
-    .phone-mockup {
-      width: 380px; height: 720px; border-radius: 36px; border: 10px solid #1e293b;
-      position: relative; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
-      background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 50%, #311b92 100%);
+    /* PREVIEW MOBILE */
+    .preview { flex: 1; display: flex; align-items: center; justify-content: center; background: #020617; padding: 10px; }
+    .phone {
+      width: 360px; height: 680px; border-radius: 30px; border: 8px solid #1e293b;
+      position: relative; overflow: hidden; background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.8); display: flex; flex-direction: column; justify-content: space-between; padding: 15px;
     }
 
-    /* RANKING CONTAINER */
-    .ranking-container {
-      position: absolute; top: 60px; right: 12px; width: 140px;
-      background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(6px);
-      border: 1px solid rgba(6, 182, 212, 0.4); border-radius: 12px;
-      padding: 8px; z-index: 20; color: #fff; font-size: 10px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    /* TOP 10 RANKING BOX */
+    .ranking-box {
+      position: absolute; top: 50px; right: 10px; width: 130px;
+      background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(6, 182, 212, 0.4);
+      border-radius: 8px; padding: 6px; z-index: 10; font-size: 9px;
     }
+    .r-tabs { display: flex; gap: 4px; margin-bottom: 4px; }
+    .r-tab { flex: 1; text-align: center; background: #334155; padding: 2px; border-radius: 3px; cursor: pointer; font-weight: bold; }
+    .r-tab.active { background: #06b6d4; color: #000; }
+    .r-list { max-height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; }
+    .r-item { display: flex; justify-content: space-between; background: rgba(255,255,255,0.05); padding: 2px 4px; border-radius: 3px; }
 
-    .ranking-tabs { display: flex; gap: 4px; margin-bottom: 6px; }
-    .tab-btn { flex: 1; padding: 3px 0; font-size: 9px; font-weight: bold; text-align: center; background: #334155; border-radius: 4px; cursor: pointer; }
-    .tab-btn.active { background: #06b6d4; color: #000; }
+    /* CABEÇALHO TIKTOK */
+    .tt-header { display: flex; justify-content: space-between; align-items: center; z-index: 5; }
+    .badge { background: #06b6d4; color: #000; font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 4px; }
+    .user { font-size: 11px; font-weight: bold; }
 
-    .ranking-list { display: flex; flex-direction: column; gap: 4px; max-height: 180px; overflow-y: auto; }
-    .ranking-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 3px 6px; border-radius: 4px; }
-    .ranking-rank { font-weight: bold; width: 16px; color: #facc15; }
-    .ranking-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0 4px; }
-    .ranking-val { font-weight: bold; color: #38bdf8; }
+    /* ROBÔ CENTRAL */
+    .robot-container { text-align: center; z-index: 5; margin-top: 20px; }
+    .robot-svg { width: 180px; height: 180px; transition: transform 0.1s; }
+    .robot-container.speaking .robot-svg { animation: bounce 0.2s infinite alternate; }
+    @keyframes bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-5px); } }
 
-    /* ROBÔ ZEZINHO */
-    .robot-character {
-      position: absolute;
-      top: 170px;
-      left: 50%;
-      transform: translateX(-50%);
-      transition: transform 0.1s ease-in-out;
-      z-index: 5;
-    }
-    
-    .robot-character.speaking {
-      animation: robotBounce 0.2s infinite alternate ease-in-out;
-    }
-
-    @keyframes robotBounce {
-      0% { transform: translateX(-50%) translateY(0) scale(1); }
-      100% { transform: translateX(-50%) translateY(-6px) scale(1.02); }
-    }
-
-    /* HEADER TIKTOK */
-    .tiktok-header { position: absolute; top: 15px; left: 15px; right: 15px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
-    .live-badge { display: flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 20px; backdrop-filter: blur(4px); }
-    .live-tag { background: #06b6d4; color: #000; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; }
-    .user-tag { font-size: 12px; font-weight: bold; }
-    .views-tag { background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 20px; font-size: 12px; backdrop-filter: blur(4px); }
-
-    /* BALÃO DE FALA */
-    .speech-bubble {
-      position: absolute; bottom: 170px; left: 15px; right: 15px;
-      background: rgba(15, 23, 42, 0.95); color: #67e8f9;
-      padding: 12px 16px; border-radius: 16px; font-size: 13px; font-weight: 800;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 10; text-align: center;
-      border: 2px solid #06b6d4;
-    }
-
-    /* CHAT TIKTOK */
-    .tiktok-chat {
-      position: absolute; bottom: 15px; left: 15px; right: 15px; height: 140px;
-      display: flex; flex-direction: column-reverse; gap: 6px; overflow: hidden; z-index: 10;
-    }
-    .chat-msg { background: rgba(15, 23, 42, 0.8); padding: 5px 10px; border-radius: 12px; font-size: 11px; backdrop-filter: blur(4px); border-left: 3px solid #06b6d4; }
-    .chat-user { font-weight: bold; }
-    .chat-user.gift { color: #facc15; }
-    .chat-user.comment { color: #38bdf8; }
-    .chat-user.tap { color: #ec4899; }
+    /* BALÃO E CHAT */
+    .bubble { background: rgba(15, 23, 42, 0.95); border: 2px solid #06b6d4; padding: 10px; border-radius: 12px; font-size: 11px; font-weight: bold; color: #67e8f9; text-align: center; z-index: 5; }
+    .chat { height: 110px; display: flex; flex-direction: column-reverse; gap: 4px; overflow: hidden; z-index: 5; }
+    .msg { background: rgba(15, 23, 42, 0.8); padding: 4px 8px; border-radius: 6px; font-size: 10px; border-left: 2px solid #06b6d4; }
   </style>
 </head>
 <body>
 
   <!-- PAINEL DE CONTROLE -->
   <div class="sidebar">
-    <h2>🤖 TikTok Live Studio</h2>
-    <p>Live com o Robô Zezinho</p>
-
-    <!-- Perfil TikTok -->
+    <h2>🤖 Robô Zezinho</h2>
+    
     <div class="card">
-      <label>Perfil do TikTok</label>
+      <label>Conexão TikTok</label>
       <div class="input-group">
-        <input type="text" id="tiktokUser" placeholder="@seu_usuario">
-        <button class="btn-success" id="btnConnect" onclick="toggleConnect()">Conectar</button>
+        <input type="text" id="userIn" placeholder="@seu_usuario">
+        <button class="btn-success" id="btnCon" onclick="toggleConn()">Conectar</button>
       </div>
-      <span id="statusText" class="status-tag status-off">● Status: Desconectado</span>
+      <span id="stTxt" style="font-size:10px; color:#f87171;">● Desconectado</span>
     </div>
 
-    <!-- Pedir Interação Automática -->
     <div class="card">
-      <label>Pedir Interação ao Vivo</label>
-      <div class="btn-grid">
-        <button class="btn-pink" onclick="askForTaps()">👉 Pedir Tap Taps</button>
-        <button class="btn-warning" onclick="askForCoins()">🪙 Pedir Moedas</button>
+      <label>Pedir na Live</label>
+      <div class="grid2">
+        <button class="btn-pink" onclick="askTap()">👉 Pedir Taps</button>
+        <button class="btn-warning" onclick="askCoin()">🪙 Pedir Moedas</button>
       </div>
     </div>
 
-    <!-- Injetar Fala -->
     <div class="card">
-      <label>Injetar Fala ao Vivo</label>
+      <label>Falar Frase Personalizada</label>
       <div class="input-group">
-        <input type="text" id="customTalkText" placeholder="O que o Zezinho deve falar?">
-        <button class="btn-warning" onclick="sendCustomTalk()">Falar</button>
+        <input type="text" id="customTxt" placeholder="O que ele vai falar?">
+        <button class="btn-warning" onclick="sendCustom()">Falar</button>
       </div>
     </div>
 
-    <!-- Simulador de Eventos da Live -->
     <div class="card">
-      <label>Simulador de Interações da Live</label>
-      <div class="btn-stack">
-        <div class="input-group">
-          <input type="text" id="simUser" placeholder="Nome do Usuário" value="Fã_Top1">
-          <input type="number" id="simAmount" placeholder="Qtd" value="10">
-        </div>
-        <div class="btn-grid">
-          <button class="btn-pink" onclick="triggerTap()">👉 Enviar Taps</button>
-          <button class="btn-warning" onclick="triggerCoins()">🪙 Enviar Coins</button>
-        </div>
-        <div class="btn-grid">
-          <button class="btn-primary" onclick="triggerFollow()">👤 Novo Seguidor</button>
-          <button class="btn-purple" onclick="triggerChat()">💬 Pergunta do Chat</button>
-        </div>
-        <button class="btn-secondary" onclick="resetRankings()" style="margin-top: 4px;">🔄 Zerar Placar do Ranking</button>
+      <label>Simulador de Teste</label>
+      <div class="input-group">
+        <input type="text" id="simName" value="Fã_Top1" placeholder="Nome">
+        <input type="number" id="simVal" value="10" style="width: 60px;" placeholder="Qtd">
       </div>
+      <div class="grid2" style="margin-bottom:6px;">
+        <button class="btn-pink" onclick="simTap()">Simular Taps</button>
+        <button class="btn-warning" onclick="simCoin()">Simular Moedas</button>
+      </div>
+      <div class="grid2">
+        <button class="btn-primary" onclick="simFollow()">Novo Seguidor</button>
+        <button class="btn-purple" onclick="simChat()">Pergunta Chat</button>
+      </div>
+      <button class="btn-secondary" onclick="resetRank()">Zerar Placar</button>
     </div>
 
-    <!-- Logs da Live -->
-    <div class="card" style="flex: 1; display: flex; flex-direction: column;">
-      <label>Logs de Conexão</label>
-      <div class="logs-container" id="logsBox">
-        <div>[00:00:00] Zezinho inicializado e operando a 100%!</div>
-      </div>
+    <div class="card" style="flex:1; display:flex; flex-direction:column;">
+      <label>Logs</label>
+      <div class="logs" id="logBox"><div>Sistema pronto.</div></div>
     </div>
   </div>
 
-  <!-- PREVIEW MOBILE -->
-  <div class="preview-area">
-    <div class="phone-mockup">
+  <!-- TELA DO CELULAR / PREVIEW -->
+  <div class="preview">
+    <div class="phone">
       
-      <!-- FUNDO TECNOLÓGICO EM VETOR -->
-      <svg width="100%" height="100%" viewBox="0 0 360 700" style="position: absolute; inset: 0;">
-        <circle cx="180" cy="250" r="140" fill="none" stroke="#1e293b" stroke-width="2" stroke-dasharray="8 8" />
-        <circle cx="180" cy="250" r="170" fill="none" stroke="#0f172a" stroke-width="4" />
-        <path d="M 0 450 L 360 450" stroke="#334155" stroke-width="2" />
-        <path d="M 0 520 L 360 520" stroke="#1e293b" stroke-width="1" />
-      </svg>
-
       <!-- RANKING TOP 10 -->
-      <div class="ranking-container">
-        <div class="ranking-tabs">
-          <div class="tab-btn active" id="tabTaps" onclick="switchTab('taps')">👉 Taps</div>
-          <div class="tab-btn" id="tabCoins" onclick="switchTab('coins')">🪙 Coins</div>
+      <div class="ranking-box">
+        <div class="r-tabs">
+          <div class="r-tab active" id="tabT" onclick="switchR('taps')">Taps</div>
+          <div class="r-tab" id="tabC" onclick="switchR('coins')">Coins</div>
         </div>
-        <div class="ranking-list" id="rankingList">
-          <!-- Itens do Ranking injetados via JS -->
+        <div class="r-list" id="rList">
+          <div style="text-align:center; color:#64748b;">Sem dados</div>
         </div>
       </div>
 
-      <!-- PERSONAGEM ROBÔ ZEZINHO -->
-      <div class="robot-character" id="robotChar">
-        <svg width="240" height="270" viewBox="0 0 240 270">
-          <!-- ANTENA -->
-          <g stroke="#06b6d4" stroke-width="4">
-            <line x1="120" y1="40" x2="120" y2="15" />
-            <circle cx="120" cy="10" r="7" fill="#ef4444" stroke="#fff" stroke-width="2" />
-          </g>
+      <!-- HEADER -->
+      <div class="tt-header">
+        <div><span class="badge">AO VIVO</span></div>
+        <div class="user" id="dispUser">@robo_zezinho</div>
+      </div>
 
-          <!-- CABEÇA -->
-          <rect x="55" y="40" width="130" height="95" rx="20" fill="#1e293b" stroke="#06b6d4" stroke-width="4" />
-
-          <!-- OLHOS DIGITAIS -->
-          <g>
-            <circle cx="90" cy="75" r="16" fill="#0284c7" stroke="#38bdf8" stroke-width="3" />
-            <circle cx="150" cy="75" r="16" fill="#0284c7" stroke="#38bdf8" stroke-width="3" />
-            <circle cx="92" cy="73" r="5" fill="#fff" />
-            <circle cx="152" cy="73" r="5" fill="#fff" />
-          </g>
-
-          <!-- BOCA FECHADA (PADRÃO) -->
-          <g id="mouthClosed">
-            <rect x="85" y="105" width="70" height="10" rx="5" fill="#0f172a" stroke="#06b6d4" stroke-width="2" />
-            <line x1="100" y1="105" x2="100" y2="115" stroke="#06b6d4" stroke-width="2" />
-            <line x1="120" y1="105" x2="120" y2="115" stroke="#06b6d4" stroke-width="2" />
-            <line x1="140" y1="105" x2="140" y2="115" stroke="#06b6d4" stroke-width="2" />
-          </g>
-
-          <!-- BOCA ABERTA (ANIMADA QUANDO FALA) -->
-          <g id="mouthOpen" style="display: none;">
-            <rect x="85" y="102" width="70" height="18" rx="6" fill="#06b6d4" stroke="#fff" stroke-width="2" />
-            <rect x="92" y="106" width="56" height="10" rx="3" fill="#0f172a" />
-          </g>
-
-          <!-- ORELHAS / FONES -->
-          <rect x="42" y="70" width="13" height="35" rx="5" fill="#06b6d4" />
-          <rect x="185" y="70" width="13" height="35" rx="5" fill="#06b6d4" />
-
-          <!-- PESCOÇO -->
-          <rect x="105" y="135" width="30" height="15" fill="#475569" stroke="#1e293b" stroke-width="3" />
-
-          <!-- CORPO / TRONCO -->
-          <rect x="65" y="150" width="110" height="85" rx="15" fill="#1e293b" stroke="#06b6d4" stroke-width="4" />
-          
-          <!-- PAINEL NO PEITO -->
-          <rect x="85" y="165" width="70" height="40" rx="8" fill="#0f172a" stroke="#334155" stroke-width="2" />
-          <circle cx="100" cy="185" r="6" fill="#22c55e" />
-          <circle cx="120" cy="185" r="6" fill="#eab308" />
-          <circle cx="140" cy="185" r="6" fill="#ef4444" />
-
-          <!-- BRAÇOS -->
-          <path d="M 65 165 Q 40 180 35 210" fill="none" stroke="#475569" stroke-width="10" stroke-linecap="round" />
-          <path d="M 175 165 Q 200 180 205 210" fill="none" stroke="#475569" stroke-width="10" stroke-linecap="round" />
-          <circle cx="35" cy="210" r="8" fill="#06b6d4" />
-          <circle cx="205" cy="210" r="8" fill="#06b6d4" />
-
-          <!-- PERNAS -->
-          <rect x="85" y="235" width="20" height="25" fill="#475569" />
-          <rect x="135" y="235" width="20" height="25" fill="#475569" />
-          <rect x="75" y="255" width="35" height="12" rx="4" fill="#06b6d4" />
-          <rect x="130" y="255" width="35" height="12" rx="4" fill="#06b6d4" />
+      <!-- PERSONAGEM -->
+      <div class="robot-container" id="robotBox">
+        <svg class="robot-svg" viewBox="0 0 240 240">
+          <!-- Antena -->
+          <line x1="120" y1="40" x2="120" y2="15" stroke="#06b6d4" stroke-width="4"/>
+          <circle cx="120" cy="10" r="6" fill="#ef4444"/>
+          <!-- Cabeça -->
+          <rect x="60" y="40" width="120" height="85" rx="15" fill="#1e293b" stroke="#06b6d4" stroke-width="3"/>
+          <!-- Olhos -->
+          <circle cx="90" cy="75" r="12" fill="#0284c7"/>
+          <circle cx="150" cy="75" r="12" fill="#0284c7"/>
+          <circle cx="92" cy="73" r="4" fill="#fff"/>
+          <circle cx="152" cy="73" r="4" fill="#fff"/>
+          <!-- Boca Fechada -->
+          <rect id="mouthC" x="90" y="95" width="60" height="8" rx="4" fill="#0f172a" stroke="#06b6d4" stroke-width="2"/>
+          <!-- Boca Aberta (Animada) -->
+          <rect id="mouthO" x="90" y="93" width="60" height="14" rx="5" fill="#06b6d4" style="display:none;"/>
+          <!-- Corpo -->
+          <rect x="75" y="135" width="90" height="70" rx="10" fill="#1e293b" stroke="#06b6d4" stroke-width="3"/>
+          <circle cx="120" cy="170" r="8" fill="#eab308"/>
         </svg>
       </div>
 
-      <!-- HEADER LIVE -->
-      <div class="tiktok-header">
-        <div class="live-badge">
-          <span class="live-tag">AO VIVO</span>
-          <span class="user-tag" id="displayUser">@robo_zezinho</span>
-        </div>
-        <div class="views-tag">👁️ 5.8k</div>
+      <!-- BALÃO -->
+      <div class="bubble" id="bubble">
+        Cara, se eu soubesse que live dava trabalho, tava dormindo!
       </div>
 
-      <!-- BALÃO DE FALA -->
-      <div class="speech-bubble" id="bubbleText">
-        Caramba! Se eu soubesse que fazer live dava tanto trabalho, eu tinha ficado na tomada!
-      </div>
-
-      <!-- CHAT TIKTOK -->
-      <div class="tiktok-chat" id="chatList">
-        <div class="chat-msg"><span class="chat-user gift">Tech_Master:</span> Enviou 50 Moedas 🪙</div>
-        <div class="chat-msg"><span class="chat-user tap">Lucas_Live:</span> Enviou 15 Taps 👉</div>
+      <!-- CHAT -->
+      <div class="chat" id="chatList">
+        <div class="msg"><b>Lucas:</b> Enviou 10 Taps 👉</div>
       </div>
 
     </div>
   </div>
 
   <script>
-    let isConnected = false;
-    let mouthInterval = null;
-    let currentTab = 'taps';
+    let connected = false;
+    let tab = 'taps';
+    let tapsRank = [];
+    let coinsRank = [];
 
-    // Estruturas de dados para o Top 10
-    let rankingTaps = [];
-    let rankingCoins = [];
-
-    // Frases prontas no estilo clássico do Chris (reclamações bemhumoradas)
-    const tapPrompts = [
-      "Ah, qualé, gente? O meu dedo robótico vai cair de tanto apertar essa tela se vocês não ajudarem!",
-      "Isso custa centavos para vocês, mas para mim custa a minha paciência! Metam o dedo nesse tap tap!",
-      "Minha mãe disse que se eu não batesse a meta de curtidas hoje, eu ia ficar de castigo na lixeira!",
-      "Caramba! Todo mundo dando dois toques na tela agora antes que o meu processador derreta!"
-    ];
-
-    const coinPrompts = [
-      "Moedas? Sério? Eu trabalho de graça o dia inteiro e vocês ainda me fazem pedir esmola digital?",
-      "Quem mandar moeda agora ganha um abraço... virtual, óbvio, porque eu não tenho braços de verdade!",
-      "Se eu ganhasse um centavo a cada vez que alguém não mandava presente, eu já estaria aposentado!",
-      "Mandem presentes! A minha bateria tá mais fraca que nota de três reais!"
-    ];
-
-    function addLog(msg) {
-      const logsBox = document.getElementById('logsBox');
-      const time = new Date().toLocaleTimeString();
-      logsBox.innerHTML = `<div>[${time}] ${msg}</div>` + logsBox.innerHTML;
+    function log(msg) {
+      const box = document.getElementById('logBox');
+      box.innerHTML = `<div>[${new Date().toLocaleTimeString()}] ${msg}</div>` + box.innerHTML;
     }
 
-    function toggleConnect() {
-      const user = document.getElementById('tiktokUser').value.trim();
-      const btn = document.getElementById('btnConnect');
-      const statusText = document.getElementById('statusText');
-      const displayUser = document.getElementById('displayUser');
-
-      if (!user) {
-        alert('Por favor, digite o seu @usuario do TikTok!');
-        return;
-      }
-
-      if (!isConnected) {
-        isConnected = true;
-        btn.innerText = 'Conectado';
-        btn.className = 'btn-success';
-        statusText.innerText = `● Status: Conectado a @${user.replace('@', '')}`;
-        statusText.className = 'status-tag status-on';
-        displayUser.innerText = user.startsWith('@') ? user : `@${user}`;
-        
-        addLog(`Conexão estabelecida com @${user.replace('@', '')}!`);
-        speakText(`Caramba, ${user}! Começou a live e eu já tô estressado! Podem mandar taps e moedas logo!`);
+    function toggleConn() {
+      const u = document.getElementById('userIn').value.trim();
+      if(!u) { alert('Digite seu @ do TikTok'); return; }
+      connected = !connected;
+      const btn = document.getElementById('btnCon');
+      const st = document.getElementById('stTxt');
+      if(connected) {
+        btn.innerText = 'Desconectar';
+        btn.className = 'btn-warning';
+        st.innerText = '● Conectado a ' + u;
+        st.style.color = '#22d3ee';
+        document.getElementById('dispUser').innerText = u.startsWith('@') ? u : '@'+u;
+        log('Conectado com sucesso!');
+        speak('Caramba, ' + u + '! A live começou, bora engajar!');
       } else {
-        isConnected = false;
         btn.innerText = 'Conectar';
-        btn.className = 'btn-primary';
-        statusText.innerText = '● Status: Desconectado';
-        statusText.className = 'status-tag status-off';
-        addLog('Conexão encerrada.');
+        btn.className = 'btn-success';
+        st.innerText = '● Desconectado';
+        st.style.color = '#f87171';
+        log('Desconectado.');
       }
     }
 
-    function speakText(text) {
-      if (!text) return;
+    function speak(text) {
+      document.getElementById('bubble').innerText = text;
+      const box = document.getElementById('robotBox');
+      const mC = document.getElementById('mouthC');
+      const mO = document.getElementById('mouthO');
 
-      document.getElementById('bubbleText').innerText = text;
-      const char = document.getElementById('robotChar');
-      const mouthOpen = document.getElementById('mouthOpen');
-      const mouthClosed = document.getElementById('mouthClosed');
+      box.classList.add('speaking');
+      mC.style.display = 'none';
+      mO.style.display = 'block';
 
-      char.classList.add('speaking');
-      
-      if (mouthInterval) clearInterval(mouthInterval);
-      let isOpen = false;
-      mouthInterval = setInterval(() => {
-        isOpen = !isOpen;
-        mouthOpen.style.display = isOpen ? 'block' : 'none';
-        mouthClosed.style.display = isOpen ? 'none' : 'block';
-      }, 100);
-
-      if ('speechSynthesis' in window) {
+      if('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'pt-BR';
-        utterance.pitch = 0.85; // Tom ligeiramente abaixo do normal, adolescente/jovem (voz do Chris)
-        utterance.rate = 1.15;  // Ritmo dinâmico, ligeiramente acelerado e expressivo
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'pt-BR';
+        utter.pitch = 1.15;
+        utter.rate = 1.25;
+        
+        const voices = window.speechSynthesis.getVoices();
+        const v = voices.find(vo => vo.lang.includes('pt') && !vo.name.toLowerCase().includes('robot'));
+        if(v) utter.voice = v;
 
-        utterance.onend = stopSpeaking;
-        utterance.onerror = stopSpeaking;
-
-        window.speechSynthesis.speak(utterance);
+        utter.onend = stopSpeak;
+        utter.onerror = stopSpeak;
+        window.speechSynthesis.speak(utter);
       } else {
-        setTimeout(stopSpeaking, 3500);
+        setTimeout(stopSpeak, 3000);
       }
     }
 
-    function stopSpeaking() {
-      const char = document.getElementById('robotChar');
-      const mouthOpen = document.getElementById('mouthOpen');
-      const mouthClosed = document.getElementById('mouthClosed');
-
-      char.classList.remove('speaking');
-      if (mouthInterval) clearInterval(mouthInterval);
-      
-      mouthOpen.style.display = 'none';
-      mouthClosed.style.display = 'block';
+    function stopSpeak() {
+      document.getElementById('robotBox').classList.remove('speaking');
+      document.getElementById('mouthC').style.display = 'block';
+      document.getElementById('mouthO').style.display = 'none';
     }
 
-    function askForTaps() {
-      const phrase = tapPrompts[Math.floor(Math.random() * tapPrompts.length)];
-      speakText(phrase);
-      addLog(`👉 Pedido de Taps enviado.`);
+    function askTap() {
+      speak("Caramba, pessoal! Mete o dedo na tela pra bater a meta de curtidas!");
+      log("Pediu taps.");
     }
 
-    function askForCoins() {
-      const phrase = coinPrompts[Math.floor(Math.random() * coinPrompts.length)];
-      speakText(phrase);
-      addLog(`🪙 Pedido de Coins enviado.`);
+    function askCoin() {
+      speak("Quem puder mandar moedas vai salvar minha vida nessa live!");
+      log("Pediu moedas.");
     }
 
-    function sendCustomTalk() {
-      const input = document.getElementById('customTalkText');
-      if (input.value.trim()) {
-        speakText(input.value);
-        addLog(`Fala enviada: "${input.value}"`);
-        input.value = '';
-      }
+    function sendCustom() {
+      const t = document.getElementById('customTxt').value.trim();
+      if(t) { speak(t); log("Fala injetada: " + t); document.getElementById('customTxt').value = ''; }
     }
 
-    function addChatMessage(user, text, type) {
-      const chatList = document.getElementById('chatList');
+    function addChat(user, txt) {
+      const list = document.getElementById('chatList');
       const div = document.createElement('div');
-      div.className = 'chat-msg';
-      div.innerHTML = `<span class="chat-user ${type}">${user}:</span> ${text}`;
-      chatList.prepend(div);
+      div.className = 'msg';
+      div.innerHTML = `<b>${user}:</b> ${txt}`;
+      list.prepend(div);
     }
 
-    // LÓGICA DE RANKING (TOP 1 A 10)
-    function updateScore(list, username, amount) {
-      let item = list.find(entry => entry.name.toLowerCase() === username.toLowerCase());
-      if (item) {
-        item.val += amount;
-      } else {
-        list.push({ name: username, val: amount });
-      }
-      list.sort((a, b) => b.val - a.val);
-      if (list.length > 10) list.pop();
+    function updateR(list, name, val) {
+      let item = list.find(i => i.name.toLowerCase() === name.toLowerCase());
+      if(item) item.val += val; else list.push({name, val});
+      list.sort((a,b) => b.val - a.val);
+      if(list.length > 10) list.pop();
+      renderR();
     }
 
-    function renderRanking() {
-      const rankingList = document.getElementById('rankingList');
-      rankingList.innerHTML = '';
-      const list = currentTab === 'taps' ? rankingTaps : rankingCoins;
-
-      if (list.length === 0) {
-        rankingList.innerHTML = `<div style="text-align:center; color:#64748b; font-size:10px; padding:10px 0;">Sem dados ainda</div>`;
-        return;
-      }
-
-      list.forEach((entry, idx) => {
-        const row = document.createElement('div');
-        row.className = 'ranking-item';
-        row.innerHTML = `
-          <span class="ranking-rank">#${idx + 1}</span>
-          <span class="ranking-name">${entry.name}</span>
-          <span class="ranking-val">${entry.val}</span>
-        `;
-        rankingList.appendChild(row);
+    function renderR() {
+      const box = document.getElementById('rList');
+      box.innerHTML = '';
+      const list = tab === 'taps' ? tapsRank : coinsRank;
+      if(list.length === 0) { box.innerHTML = '<div style="text-align:center; color:#64748b;">Sem dados</div>'; return; }
+      list.forEach((item, idx) => {
+        box.innerHTML += `<div class="r-item"><span>#${idx+1} ${item.name}</span><b>${item.val}</b></div>`;
       });
     }
 
-    function switchTab(tab) {
-      currentTab = tab;
-      document.getElementById('tabTaps').className = `tab-btn ${tab === 'taps' ? 'active' : ''}`;
-      document.getElementById('tabCoins').className = `tab-btn ${tab === 'coins' ? 'active' : ''}`;
-      renderRanking();
+    function switchR(t) {
+      tab = t;
+      document.getElementById('tabT').className = 'r-tab ' + (t==='taps'?'active':'');
+      document.getElementById('tabC').className = 'r-tab ' + (t==='coins'?'active':'');
+      renderR();
     }
 
-    function resetRankings() {
-      rankingTaps = [];
-      rankingCoins = [];
-      renderRanking();
-      addLog(`🔄 Placar dos Rankings foi resetado.`);
+    function resetRank() {
+      tapsRank = []; coinsRank = [];
+      renderR();
+      log("Placar zerado.");
     }
 
-    function triggerTap() {
-      const username = document.getElementById('simUser').value.trim() || 'Usuário_Anônimo';
-      const amount = parseInt(document.getElementById('simAmount').value) || 5;
-
-      updateScore(rankingTaps, username, amount);
-      renderRanking();
-      addChatMessage(username, `Enviou ${amount} Taps 👉`, 'tap');
-      addLog(`👉 ${username} enviou +${amount} Taps`);
-
-      const topUser = rankingTaps[0]?.name;
-      if (topUser === username && rankingTaps[0].val === amount) {
-        speakText(`Caramba, ${username}! Você virou o primeiro lugar em curtidas! Olha aí, mãe, eu tô vencendo em alguma coisa!`);
-      } else {
-        speakText(`Valeu pelos taps, ${username}! Pelo menos alguém se importa!`);
-      }
+    function simTap() {
+      const n = document.getElementById('simName').value || 'Anônimo';
+      const v = parseInt(document.getElementById('simVal').value) || 5;
+      updateR(tapsRank, n, v);
+      addChat(n, `Enviou ${v} Taps 👉`);
+      speak(`Valeu pelos taps, ${n}!`);
     }
 
-    function triggerCoins() {
-      const username = document.getElementById('simUser').value.trim() || 'Usuário_Anônimo';
-      const amount = parseInt(document.getElementById('simAmount').value) || 10;
-
-      updateScore(rankingCoins, username, amount);
-      renderRanking();
-      addChatMessage(username, `Enviou ${amount} Moedas 🪙`, 'gift');
-      addLog(`🪙 ${username} enviou +${amount} Moedas`);
-
-      const topUser = rankingCoins[0]?.name;
-      if (topUser === username && rankingCoins[0].val === amount) {
-        speakText(`Caramba, ${username}! Você mandou tanta moeda que agora eu posso comprar um chiclete! Top 1 garantido!`);
-      } else {
-        speakText(`Obrigado pelas moedas, ${username}! Minha conta bancária digital agradece!`);
-      }
+    function simCoin() {
+      const n = document.getElementById('simName').value || 'Anônimo';
+      const v = parseInt(document.getElementById('simVal').value) || 10;
+      updateR(coinsRank, n, v);
+      addChat(n, `Enviou ${v} Moedas 🪙`);
+      speak(`Caramba, ${n}! Obrigado pelas moedas!`);
     }
 
-    function triggerFollow() {
-      const username = document.getElementById('simUser').value.trim() || 'Novo_Seguidor';
-      const msg = `Ah, legal! ${username} começou a seguir. Bem-vindo ao meu sofrimento diário!`;
-      addLog(`👤 ${username} começou a seguir`);
-      speakText(msg);
+    function simFollow() {
+      const n = document.getElementById('simName').value || 'Novo_Seguidor';
+      addChat(n, `Começou a seguir! 👤`);
+      speak(`Bem-vindo ao caos, ${n}!`);
     }
 
-    function triggerChat() {
-      const username = document.getElementById('simUser').value.trim() || 'Curioso_Tech';
-      const q = "Zezinho, de onde você veio?";
-      const a = "Eu vim de um lugar onde as pessoas não fazem perguntas idiotas no chat... Só que não!";
-      addLog(`💬 Chat de ${username}: ${q}`);
-      addChatMessage(username, q, 'comment');
-      speakText(a);
+    function simChat() {
+      const n = document.getElementById('simName').value || 'Curioso';
+      addChat(n, `Zezinho, de onde você é?`);
+      speak(`Eu vim de um lugar onde as pessoas não fazem perguntas difíceis!`);
     }
-
-    // Inicialização da interface
-    renderRanking();
   </script>
 </body>
 </html>
