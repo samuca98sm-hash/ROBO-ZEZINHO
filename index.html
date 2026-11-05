@@ -276,7 +276,7 @@
 
       <!-- BALÃO DE FALA -->
       <div class="speech-bubble" id="bubbleText">
-        Caramba! Se eu soubesse que fazer live dava tanto trabalho, eu tinha ficado na tomada!
+        Cara, se eu soubesse que fazer live dava tanto trabalho, eu tinha ficado estudando álgebra!
       </div>
 
       <!-- CHAT TIKTOK -->
@@ -297,19 +297,19 @@
     let rankingTaps = [];
     let rankingCoins = [];
 
-    // Frases prontas no estilo clássico do Chris (reclamações bemhumoradas)
+    // Frases prontas no estilo do Greg (falando rápido, meio indignado, focado em regras e preocupado)
     const tapPrompts = [
-      "Ah, qualé, gente? O meu dedo robótico vai cair de tanto apertar essa tela se vocês não ajudarem!",
-      "Isso custa centavos para vocês, mas para mim custa a minha paciência! Metam o dedo nesse tap tap!",
-      "Minha mãe disse que se eu não batesse a meta de curtidas hoje, eu ia ficar de castigo na lixeira!",
-      "Caramba! Todo mundo dando dois toques na tela agora antes que o meu processador derreta!"
+      "Caramba, pessoal! Se vocês não derem tap tap na tela, o meu alarme vai disparar e eu vou me atrasar!",
+      "Minha mãe disse que se a live não bater a meta de curtidas, eu vou ficar de castigo sem ver TV por um mês!",
+      "Por favor, gente, aperta a tela! Cada tap conta para eu não passar vergonha aqui na frente de todo mundo!",
+      "Vocês podiam só dar dois toques na tela, né? É de graça! Quer dizer, eu acho que é de graça..."
     ];
 
     const coinPrompts = [
-      "Moedas? Sério? Eu trabalho de graça o dia inteiro e vocês ainda me fazem pedir esmola digital?",
-      "Quem mandar moeda agora ganha um abraço... virtual, óbvio, porque eu não tenho braços de verdade!",
-      "Se eu ganhasse um centavo a cada vez que alguém não mandava presente, eu já estaria aposentado!",
-      "Mandem presentes! A minha bateria tá mais fraca que nota de três reais!"
+      "Moedas? Olha, eu queria ajudar, mas eu só tenho dois dólares e cinquenta centavos na carteira!",
+      "Quem mandar presente agora vai me salvar de ter que pedir dinheiro emprestado pro Caruso!",
+      "Mandem moedas por favor! Minha mesada não cobre os custos de manter este robô ligado!",
+      "Se alguém mandar moeda, eu juro que finjo que sou popular na escola!"
     ];
 
     function addLog(msg) {
@@ -338,7 +338,7 @@
         displayUser.innerText = user.startsWith('@') ? user : `@${user}`;
         
         addLog(`Conexão estabelecida com @${user.replace('@', '')}!`);
-        speakText(`Caramba, ${user}! Começou a live e eu já tô estressado! Podem mandar taps e moedas logo!`);
+        speakText(`Caramba, ${user}! A live começou e eu já tô nervoso! Podem mandar taps e moedas logo antes que dê problema!`);
       } else {
         isConnected = false;
         btn.innerText = 'Conectar';
@@ -371,8 +371,17 @@
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'pt-BR';
-        utterance.pitch = 0.85; // Tom ligeiramente abaixo do normal, adolescente/jovem (voz do Chris)
-        utterance.rate = 1.15;  // Ritmo dinâmico, ligeiramente acelerado e expressivo
+        
+        // Ajustes para a voz do Greg Wuliger (jovem, tom natural/humano sem efeito robótico, ágil e um pouco tenso)
+        utterance.pitch = 1.15; // Tom de adolescente (um pouco mais alto que o Chris, mas natural)
+        utterance.rate = 1.25;  // Ritmo acelerado, característico do Greg falando rápido quando está aflito
+
+        // Tenta encontrar uma voz padrão do sistema em português que seja natural humana (evitando sintetizadores metálicos/robóticos)
+        const voices = window.speechSynthesis.getVoices();
+        const ptVoice = voices.find(v => v.lang.includes('pt') && !v.name.toLowerCase().includes('robot') && !v.name.toLowerCase().includes('compact'));
+        if (ptVoice) {
+          utterance.voice = ptVoice;
+        }
 
         utterance.onend = stopSpeaking;
         utterance.onerror = stopSpeaking;
@@ -483,9 +492,9 @@
 
       const topUser = rankingTaps[0]?.name;
       if (topUser === username && rankingTaps[0].val === amount) {
-        speakText(`Caramba, ${username}! Você virou o primeiro lugar em curtidas! Olha aí, mãe, eu tô vencendo em alguma coisa!`);
+        speakText(`Caramba, ${username}! Você assumiu o primeiro lugar! Olha só, eu sabia que matemática e esforço valiam a pena!`);
       } else {
-        speakText(`Valeu pelos taps, ${username}! Pelo menos alguém se importa!`);
+        speakText(`Valeu pelos taps, ${username}! Pelo menos alguém me ajuda aqui!`);
       }
     }
 
@@ -500,15 +509,15 @@
 
       const topUser = rankingCoins[0]?.name;
       if (topUser === username && rankingCoins[0].val === amount) {
-        speakText(`Caramba, ${username}! Você mandou tanta moeda que agora eu posso comprar um chiclete! Top 1 garantido!`);
+        speakText(`Caramba, ${username}! Com esse tanto de moeda dava pra comprar uns dez sanduíches na lanchonete! Top 1 garantido!`);
       } else {
-        speakText(`Obrigado pelas moedas, ${username}! Minha conta bancária digital agradece!`);
+        speakText(`Obrigado pelas moedas, ${username}! Minha carteira digital tá quase respirando!`);
       }
     }
 
     function triggerFollow() {
       const username = document.getElementById('simUser').value.trim() || 'Novo_Seguidor';
-      const msg = `Ah, legal! ${username} começou a seguir. Bem-vindo ao meu sofrimento diário!`;
+      const msg = `Nossa! ${username} começou a seguir. Seja bem-vindo ao caos organizado desta live!`;
       addLog(`👤 ${username} começou a seguir`);
       speakText(msg);
     }
@@ -516,7 +525,7 @@
     function triggerChat() {
       const username = document.getElementById('simUser').value.trim() || 'Curioso_Tech';
       const q = "Zezinho, de onde você veio?";
-      const a = "Eu vim de um lugar onde as pessoas não fazem perguntas idiotas no chat... Só que não!";
+      const a = "Eu vim de um lugar onde as pessoas estudam em vez de ficar fazendo perguntas difíceis no chat!";
       addLog(`💬 Chat de ${username}: ${q}`);
       addChatMessage(username, q, 'comment');
       speakText(a);
