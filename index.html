@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TikTok Live AI Studio - Robô Zezinho</title>
+  <title>TikTok Live Studio - Robô Zezinho</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { display: flex; height: 100vh; width: 100vw; background-color: #0f172a; color: #fff; font-family: system-ui, -apple-system, sans-serif; overflow: hidden; }
@@ -118,8 +118,8 @@
 
   <!-- PAINEL DE CONTROLE -->
   <div class="sidebar">
-    <h2>🤖 TikTok AI Studio</h2>
-    <p>Live com o Robô Zezinho (AI)</p>
+    <h2>🤖 TikTok Live Studio</h2>
+    <p>Live com o Robô Zezinho</p>
 
     <!-- Perfil TikTok -->
     <div class="card">
@@ -269,7 +269,7 @@
       <div class="tiktok-header">
         <div class="live-badge">
           <span class="live-tag">AO VIVO</span>
-          <span class="user-tag" id="displayUser">@robo_zezinho_ai</span>
+          <span class="user-tag" id="displayUser">@robo_zezinho</span>
         </div>
         <div class="views-tag">👁️ 5.8k</div>
       </div>
@@ -516,7 +516,7 @@
     function triggerChat() {
       const username = document.getElementById('simUser').value.trim() || 'Curioso_Tech';
       const q = "Zezinho, de onde você veio?";
-      const a = "Eu fui totalmente desenvolvido em um laboratório de Inteligência Artificial para animar lives!";
+      const a = "Eu fui totalmente desenvolvido em um laboratório para animar lives!";
       addLog(`💬 Chat de ${username}: ${q}`);
       addChatMessage(username, q, 'comment');
       speakText(a);
