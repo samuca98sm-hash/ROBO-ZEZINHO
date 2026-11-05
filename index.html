@@ -297,6 +297,7 @@
     let rankingTaps = [];
     let rankingCoins = [];
 
+    // Frases prontas no estilo do Greg (falando rápido, meio indignado, focado em regras e preocupado)
     const tapPrompts = [
       "Caramba, pessoal! Se vocês não derem tap tap na tela, o meu alarme vai disparar e eu vou me atrasar!",
       "Minha mãe disse que se a live não bater a meta de curtidas, eu vou ficar de castigo sem ver TV por um mês!",
@@ -370,9 +371,12 @@
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'pt-BR';
-        utterance.pitch = 1.15;
-        utterance.rate = 1.25;
+        
+        // Ajustes para a voz do Greg Wuliger (jovem, tom natural/humano sem efeito robótico, ágil e um pouco tenso)
+        utterance.pitch = 1.15; // Tom de adolescente (um pouco mais alto que o Chris, mas natural)
+        utterance.rate = 1.25;  // Ritmo acelerado, característico do Greg falando rápido quando está aflito
 
+        // Tenta encontrar uma voz padrão do sistema em português que seja natural humana (evitando sintetizadores metálicos/robóticos)
         const voices = window.speechSynthesis.getVoices();
         const ptVoice = voices.find(v => v.lang.includes('pt') && !v.name.toLowerCase().includes('robot') && !v.name.toLowerCase().includes('compact'));
         if (ptVoice) {
@@ -429,6 +433,7 @@
       chatList.prepend(div);
     }
 
+    // LÓGICA DE RANKING (TOP 1 A 10)
     function updateScore(list, username, amount) {
       let item = list.find(entry => entry.name.toLowerCase() === username.toLowerCase());
       if (item) {
@@ -526,6 +531,7 @@
       speakText(a);
     }
 
+    // Inicialização da interface
     renderRanking();
   </script>
 </body>
