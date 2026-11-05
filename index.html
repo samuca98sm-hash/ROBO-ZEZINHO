@@ -276,10 +276,10 @@
 
       <!-- BALÃO DE FALA -->
       <div class="speech-bubble" id="bubbleText">
-        Olá humanos! Digitem o seu @ do TikTok para iniciar a conexão!
+        Caramba! Se eu soubesse que fazer live dava tanto trabalho, eu tinha ficado na tomada!
       </div>
 
-      <!-- CHAT DA LIVE -->
+      <!-- CHAT TIKTOK -->
       <div class="tiktok-chat" id="chatList">
         <div class="chat-msg"><span class="chat-user gift">Tech_Master:</span> Enviou 50 Moedas 🪙</div>
         <div class="chat-msg"><span class="chat-user tap">Lucas_Live:</span> Enviou 15 Taps 👉</div>
@@ -297,19 +297,19 @@
     let rankingTaps = [];
     let rankingCoins = [];
 
-    // Frases prontas para incentivar a Live
+    // Frases prontas no estilo clássico do Chris (reclamações bemhumoradas)
     const tapPrompts = [
-      "Família, mete o dedo na telinha! Vamos bater a meta de curtidas!",
-      "Quem aí tá gostando da live? Solta o tap tap na tela pra me dar uma força!",
-      "Quanto mais tap tap, mais rápido meu processador roda! Bora curtir pessoal!",
-      "Olha o dedo na telinha! Todo mundo dando dois toques pra ajudar a live a subir!"
+      "Ah, qualé, gente? O meu dedo robótico vai cair de tanto apertar essa tela se vocês não ajudarem!",
+      "Isso custa centavos para vocês, mas para mim custa a minha paciência! Metam o dedo nesse tap tap!",
+      "Minha mãe disse que se eu não batesse a meta de curtidas hoje, eu ia ficar de castigo na lixeira!",
+      "Caramba! Todo mundo dando dois toques na tela agora antes que o meu processador derreta!"
     ];
 
     const coinPrompts = [
-      "Quem puder fortalecer com moedas ou presentes vai me ajudar a manter as baterias 100% carregadas!",
-      "Mande presentes para me ajudar a subir no ranking de criadores!",
-      "Presentes no chat ativam o meu modo de festa! Quem vai mandar o próximo?",
-      "Quer ver o Robô Zezinho com energia máxima? Mande moedas na live!"
+      "Moedas? Sério? Eu trabalho de graça o dia inteiro e vocês ainda me fazem pedir esmola digital?",
+      "Quem mandar moeda agora ganha um abraço... virtual, óbvio, porque eu não tenho braços de verdade!",
+      "Se eu ganhasse um centavo a cada vez que alguém não mandava presente, eu já estaria aposentado!",
+      "Mandem presentes! A minha bateria tá mais fraca que nota de três reais!"
     ];
 
     function addLog(msg) {
@@ -338,7 +338,7 @@
         displayUser.innerText = user.startsWith('@') ? user : `@${user}`;
         
         addLog(`Conexão estabelecida com @${user.replace('@', '')}!`);
-        speakText(`Sistema totalmente online para a live de ${user}! Podem mandar taps, moedas e perguntas!`);
+        speakText(`Caramba, ${user}! Começou a live e eu já tô estressado! Podem mandar taps e moedas logo!`);
       } else {
         isConnected = false;
         btn.innerText = 'Conectar';
@@ -371,8 +371,8 @@
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'pt-BR';
-        utterance.pitch = 0.6; // Tom mais grave e imponente estilo narrador
-        utterance.rate = 0.95; // Velocidade pausada e marcante de narrador
+        utterance.pitch = 0.85; // Tom ligeiramente abaixo do normal, adolescente/jovem (voz do Chris)
+        utterance.rate = 1.15;  // Ritmo dinâmico, ligeiramente acelerado e expressivo
 
         utterance.onend = stopSpeaking;
         utterance.onerror = stopSpeaking;
@@ -483,9 +483,9 @@
 
       const topUser = rankingTaps[0]?.name;
       if (topUser === username && rankingTaps[0].val === amount) {
-        speakText(`Atenção! Muito obrigado pelos taps, ${username}! Você assumiu o primeiro lugar no ranking de curtidas!`);
+        speakText(`Caramba, ${username}! Você virou o primeiro lugar em curtidas! Olha aí, mãe, eu tô vencendo em alguma coisa!`);
       } else {
-        speakText(`Obrigado pelas curtidas na tela, ${username}!`);
+        speakText(`Valeu pelos taps, ${username}! Pelo menos alguém se importa!`);
       }
     }
 
@@ -500,15 +500,15 @@
 
       const topUser = rankingCoins[0]?.name;
       if (topUser === username && rankingCoins[0].val === amount) {
-        speakText(`Magnífico! Que presente espetacular, ${username}! Você acaba de conquistar a liderança absoluta no ranking de moedas!`);
+        speakText(`Caramba, ${username}! Você mandou tanta moeda que agora eu posso comprar um chiclete! Top 1 garantido!`);
       } else {
-        speakText(`Impressionante! Muito obrigado pelas moedas enviadas, ${username}!`);
+        speakText(`Obrigado pelas moedas, ${username}! Minha conta bancária digital agradece!`);
       }
     }
 
     function triggerFollow() {
       const username = document.getElementById('simUser').value.trim() || 'Novo_Seguidor';
-      const msg = `Seja muito bem-vindo à transmissão, ${username}! Obrigado por seguir o canal!`;
+      const msg = `Ah, legal! ${username} começou a seguir. Bem-vindo ao meu sofrimento diário!`;
       addLog(`👤 ${username} começou a seguir`);
       speakText(msg);
     }
@@ -516,7 +516,7 @@
     function triggerChat() {
       const username = document.getElementById('simUser').value.trim() || 'Curioso_Tech';
       const q = "Zezinho, de onde você veio?";
-      const a = "Eu fui construído em um laboratório avançado para comandar esta transmissão!";
+      const a = "Eu vim de um lugar onde as pessoas não fazem perguntas idiotas no chat... Só que não!";
       addLog(`💬 Chat de ${username}: ${q}`);
       addChatMessage(username, q, 'comment');
       speakText(a);
